@@ -1,20 +1,20 @@
 package aggregate
 
 import (
-	"github.com/mbict/go-eventbus"
+	"github.com/mbict/go-domain/v2"
 	"reflect"
 )
 
-type EventStream []interface{}
+type EventStream []any
 
 func (e *EventStream) IsEmpty() bool {
 	return e == nil || len(*e) == 0
 }
 
-func (e EventStream) HasAnyOf(event interface{}) bool {
-	if hasEvt, ok := event.(eventbus.Event); ok {
+func (e EventStream) HasAnyOf(event any) bool {
+	if hasEvt, ok := event.(domain.Event); ok {
 		for _, v := range e {
-			if evt, ok := v.(eventbus.Event); ok && evt.EventType() == hasEvt.EventType() {
+			if evt, ok := v.(domain.Event); ok && evt.EventName() == hasEvt.EventName() {
 				return true
 			}
 		}
@@ -29,12 +29,12 @@ func (e EventStream) HasAnyOf(event interface{}) bool {
 	return false
 }
 
-func (e EventStream) GetOf(event interface{}) []interface{} {
-	var res []interface{}
+func (e EventStream) GetOf(event any) []any {
+	var res []any
 
-	if hasEvt, ok := event.(eventbus.Event); ok {
+	if hasEvt, ok := event.(domain.Event); ok {
 		for _, v := range e {
-			if evt, ok := v.(eventbus.Event); ok && evt.EventType() == hasEvt.EventType() {
+			if evt, ok := v.(domain.Event); ok && evt.EventName() == hasEvt.EventName() {
 				res = append(res, v)
 			}
 		}
